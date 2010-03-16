@@ -32,6 +32,6 @@ Please find log file at haplo_test_50K.log.
 
   * Input file: -- loc file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/haplo_test_50K.loc haplo_test_50K.loc]
 
-  * Output file: -- log file: [[http://xuhu-rwm-map.googlecode.com/svn/wiki/data/haplo_test_50K.log haplo_test_50K.log]
+  * Output file: -- log file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/haplo_test_50K.log haplo_test_50K.log]
 
   * Output group file: -- example file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACP_0.out BACP_0.out]  [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACQ_0.out BACQ_0.out]   [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACR_0.out BACR_0.out]  [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACT_0.out BACT_0.out] [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACU_0.out BACU_0.out]
