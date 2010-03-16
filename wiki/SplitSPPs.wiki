@@ -1,0 +1,37 @@
+#labels Featured
+#Script to split haplo file and generate consensus
+
+== Summary ==
+
+This script group spp sequences and generates consensus sequence from loc file.
+
+
+== Details ==
+
+=== Program logic flow ===
+  * [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/split_flowchart.pdf split_flowchart.pdf]
+
+=== Parameters ===
+  * Input loc file
+  * windowsize and windowstep (optional)
+
+=== Sample Command ===
+{{{
+$ python split_spps_v4.py haplo_test_50K.loc 0.1 0.05
+
+BACP
+BACQ
+BACR
+BACT
+BACU
+... ...
+Please find log file at haplo_test_50K.log. 
+}}}
+
+=== Input and Output ===
+
+  * Input file: -- loc file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/haplo_test_50K.loc haplo_test_50K.loc]
+
+  * Output file: -- log file: [[http://xuhu-rwm-map.googlecode.com/svn/wiki/data/haplo_test_50K.log haplo_test_50K.log]
+
+  * Output group file: -- example file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACP_0.out BACP_0.out]  [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACQ_0.out BACQ_0.out]   [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACR_0.out BACR_0.out]  [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACT_0.out BACT_0.out] [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/BACU_0.out BACU_0.out]
