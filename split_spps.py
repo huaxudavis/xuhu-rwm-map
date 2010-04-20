@@ -3,7 +3,7 @@
 # Author: Huaqin Xu (huaxu@ucdavis.edu)
 # Supervisor: Alexander Kozik (akozik@atgc.org)
 # Date: Oct.12. 2009
-# Last update: Mar.1. 2010
+# Last update: April.20. 2010
 # Description:
 #
 # This python script splits file by prefix and count the match information. 
@@ -64,6 +64,7 @@ def read_file(afile):
 def getData(lines):
 	#------------------------ variables -----------------------------------------
 	global header				# header of the input file
+	global colcount
 	global queue				# spps groups
 	global content				# spps and seqs stored by each group
 	global seq				# seqs for all spps
@@ -77,7 +78,7 @@ def getData(lines):
 		sys.exit(0)
 		
 	colcount=lines[0].count(delimiter)+1 	# how many columns in the file
-	header = lines[0] 			# get the header of the file
+	header = ""			# get the header of the file
 	
 	queue=[]				
 	content={}				
@@ -85,17 +86,19 @@ def getData(lines):
 	aq = 'XXXX'				# 4_letter_code group name
 	
 	#--------------- read lines from file ----------------------------------------
-	for l in range(1, datalen):
+	for l in range(0, datalen):
 
 		# check for empty lines and incorrect field numbers
 		if lines[l] != '\n':
-			if lines[l].count(delimiter)==colcount-1:
+			if lines[l][0:1] == ";":
+				header += lines[l]
+			elif lines[l].count(delimiter)==colcount-1:
 				arow=lines[l].rstrip().split(delimiter)
 				if(arow[0][0:prefix] != aq):		# find a differnt group
 					aq = arow[0][0:prefix]
 					queue.append(aq)		# append the different group to queue
 					content[aq] = {}		# initialize the content[groupname]
-					print aq			# debugging
+					#print aq			# debugging
 				
 				content[aq][arow[0]] = arow[1:] 	# content[groupname][sppname] = seq
 				seq[arow[0]] = arow[1:]			# seq[sppname] = seq
@@ -121,7 +124,7 @@ def findgroup(q):
 	global seq
 
 	misscutoff = 180 			# Cut off value total scores
-	radiolistA={}				# store the radio of 'A' for each spp
+	ratiolistA={}				# store the ratio of 'A' for each spp
 	groupx={}				# store spps in each group
 	
 	#=== calculate the minimum allow distance ===
@@ -137,7 +140,7 @@ def findgroup(q):
 		groupx[i] = []		
 
 	
-	#------------------- calculate radioA and locate spp into the group -----------
+	#------------------- calculate ratioA and locate spp into the group -----------
 	for (id, line) in content[q].items():
 		unisum = dict(map(lambda k:(k,1), line)).keys() # get unique letters in the spp
 		unisum.sort()
@@ -146,28 +149,28 @@ def findgroup(q):
 		#---------- calculate A/(A+B) ratio ----------
 		if(len(unisum) == 1):
 			if(unisum[0]== 'A'):
-				radiolistA[id] = 1.0
+				ratiolistA[id] = 1.0
 			else:
-				radiolistA[id] = 0
+				ratiolistA[id] = 0
 		elif(len(unisum) == 2):
 			if(unisum[0]!= '-'):
-				radiolistA[id] = countsum[0]/(countsum[0]+countsum[1])
+				ratiolistA[id] = countsum[0]/(countsum[0]+countsum[1])
 			elif(unisum[0]== '-' and countsum[0] < misscutoff):
 				if(unisum[1]== 'A'):
-					radiolistA[id] = 1.0
+					ratiolistA[id] = 1.0
 				else:
-					radiolistA[id] = 0
+					ratiolistA[id] = 0
 			else:
-				radiolistA[id] = 0
+				ratiolistA[id] = 0
 		else:
 			if(countsum[0] < misscutoff):
-				radiolistA[id] = countsum[1]/(countsum[1]+countsum[2])
+				ratiolistA[id] = countsum[1]/(countsum[1]+countsum[2])
 			else:
-				radiolistA[id] = 0
+				ratiolistA[id] = 0
 						
 		#---------- locate spps into group ----------
 		for i in range(0, maxgroupnum+1):
-			if(radiolistA[id] >= windowstep*i and radiolistA[id] <= windowsize+windowstep*i):
+			if(ratiolistA[id] >= windowstep*i and ratiolistA[id] <= windowsize+windowstep*i):
 				groupx[i].append(id)
 	
 	#------------------- find the first two largest groups ------------------------
@@ -195,24 +198,24 @@ def findgroup(q):
 		for id in groupx[order1]:	# get spps and seqs in the group
 			subgroup1[id] = seq[id]
 		spp = id[0:4]
-		radioA = str(windowstep*order1)+"-"+str(windowsize+windowstep*order1) # calculate radioA range for the group
-		matchseq1 = getconsensus(subgroup1)	# get consensus   
-		printtable(spp, suffix, subgroup1, matchseq1, radioA)	# print output
+		ratioA = str(windowstep*order1)+"-"+str(windowsize+windowstep*order1) # calculate ratioA range for the group
+		matchseq1 = getconsensus(spp, suffix, subgroup1)	# get consensus   
+		printtable(spp, suffix, subgroup1, matchseq1, ratioA)	# print output
 	else:					#have two groups
 		suffix = '1'			
 		for id in groupx[order1]:	
 			subgroup1[id] = seq[id]
 		spp = id[0:4]
-		radioA = str(windowstep*order1)+"-"+str(windowsize+windowstep*order1)	
-		matchseq1 = getconsensus(subgroup1)  
-		printtable(spp, suffix, subgroup1, matchseq1, radioA)
+		ratioA = str(windowstep*order1)+"-"+str(windowsize+windowstep*order1)	
+		matchseq1 = getconsensus(spp, suffix, subgroup1)  
+		printtable(spp, suffix, subgroup1, matchseq1, ratioA)
 		
 		suffix = '2'			
 		for id in groupx[order2]:	
 			subgroup2[id] = seq[id]
-		radioA = str(windowstep*order2)+"-"+str(windowsize+windowstep*order1)	
-		matchseq2 = getconsensus(subgroup2)  
-		printtable(spp, suffix, subgroup2, matchseq2, radioA)
+		ratioA = str(windowstep*order2)+"-"+str(windowsize+windowstep*order1)	
+		matchseq2 = getconsensus(spp, suffix, subgroup2)  
+		printtable(spp, suffix, subgroup2, matchseq2, ratioA)
 
 	
 		
@@ -221,14 +224,26 @@ def findgroup(q):
 # Function: gets the number of mismatches and generates the consensus seq
 # Output:  consensus seq and No. of mismatches
 
-def getconsensus(groupseq):
-	global header
+def getconsensus(spp, suffix, groupseq):
+	global colcount
 	
-	totallen = header.count("\t")
 	matchseq = []
+	countstr = ""
+	matchresult = []
+	countseq={}
+	fractseq={}
+
 	mismatch = 0
+	countseq['A']={}
+	countseq['B']={}
+	countseq['M']={}
+	countseq['AB']={}
+	countseq['ALL']={}
+	fractseq['A']={}
+	fractseq['B']={}
+	fractseq['M']={}
 	
-	for j in range(0, totallen):
+	for j in range(0, colcount-1):
 		sum = map(lambda i:i[j], groupseq.values())  # get all letters in j position
 		unisum = dict(map(lambda k:(k,1), sum)).keys() # get unique letters in j position
 		unisum.sort()
@@ -238,12 +253,29 @@ def getconsensus(groupseq):
 			mismatch = mismatch +1
 			
 		# get No. of each letter	
-		countsum = map(lambda t: (float(sum.count(t))/float(len(sum))), unisum)
+		letter = ['A', 'B', '-']
+		countsum = map(lambda t: (sum.count(t)), letter)		
+		
+		countseq['A'][j] = str(countsum[0])
+		countseq['B'][j] = str(countsum[1])
+		countseq['M'][j] = str(countsum[2])
+		countseq['AB'][j] = str(countsum[0]+countsum[1])
+		countseq['ALL'][j] = str(countsum[0]+countsum[1]+countsum[2])
+		print spp+"\t"+str(countsum[0])+"\t"+str(countsum[1])+"\t"+str(countsum[2])		
+		
+		if(countseq['AB'][j] == "0"):
+			fractseq['A'][j] = "0"
+			fractseq['B'][j] = "0"
+		else:
+			fractseq['A'][j] = str(int(round((float(countsum[0])/float(countsum[0]+countsum[1]))*100)))
+			fractseq['B'][j] = str(int(round((float(countsum[1])/float(countsum[0]+countsum[1]))*100)))
+		fractseq['M'][j] = str(int(round((float(countsum[2])/float(countsum[0]+countsum[1]+countsum[2]))*100)))	
+		
 
-
+		
 		# get the consensus seq
 		if(len(unisum)==1): 
-			matchseq.append(unisum[0])	                   
+			matchseq.append(unisum[0])
 		elif(len(unisum)==2):
 			if(countsum[0] >= countsum[1]):
 				matchseq.append(unisum[0])
@@ -257,26 +289,36 @@ def getconsensus(groupseq):
 			else:
 				matchseq.append(unisum[2])
 				
-	matchseq.append(mismatch) # append No. of mismatches at the end of consensus seq
-	return matchseq
+	countstr += "COUNT_A_"+spp+"_"+suffix+"\t".join(countseq['A'].values()) + "\n"
+	countstr += "COUNT_B_"+spp+"_"+suffix+"\t".join(countseq['B'].values()) + "\n"
+	countstr += "COUNT_M_"+spp+"_"+suffix+"\t".join(countseq['M'].values()) + "\n"
+	countstr += "COUNT_AB_"+spp+"_"+suffix+"\t".join(countseq['AB'].values()) + "\n"
+	countstr += "COUNT_ALL_"+spp+"_"+suffix+"\t".join(countseq['ALL'].values()) + "\n"
+	countstr += "FRACT_A_"+spp+"_"+suffix+"\t".join(fractseq['A'].values()) + "\n"
+	countstr += "FRACT_B_"+spp+"_"+suffix+"\t".join(fractseq['B'].values()) + "\n"
+	countstr += "FRACT_M_"+spp+"_"+suffix+"\t".join(fractseq['M'].values()) + "\n"
+	
+	matchresult.append(countstr) # count informaiton
+	matchresult.append(matchseq) # consensus sequence
+	matchresult.append(mismatch) # No. of mismatches
+	return matchresult
 
 
 #=========================== function printtable =====================================
 # Input: spp: 4_letter_code,
 #	 suffix: suffix of the subgroup
 #	 subgroup: spp and seqs of this subgroup
-#	 matchseq: consensus seq wtih number of mismatch 
-#	 radioA: radioA range
+#	 matchresult: consensus seq wtih number of mismatch 
+#	 ratioA: ratioA range
 # Function: write to outfile and logfile
 
-def printtable(spp, suffix, subgroup, matchseq, radioA):
+def printtable(spp, suffix, subgroup, matchresult, ratioA):
 	global header
 	global totalspps
 	global totalmismatch
 	global logf
-	global option	
-	
-	maxmismatch = 10	# max No. of mismatches to generate consensus seq
+	global option
+	global maxmismatch
 	
 	#---------------- write output file --------------------	
 	outfile= spp + "_" + suffix +".out"
@@ -285,32 +327,35 @@ def printtable(spp, suffix, subgroup, matchseq, radioA):
 	outf.write(header)			# write header
 	for (key,line) in subgroup.items():	# write spps
 		outf.write(key+"\t"+"\t".join(line)+"\n")
+	outf.write(matchresult[0])
 	
-	mismatch = matchseq.pop()
+	mismatch = matchresult.pop()
 	if(mismatch < maxmismatch): 		# write consensus seq
 		consensus_success = "_Y_"
-		outf.write("CONSENSUS_"+spp+"_"+suffix+"\t"+"\t".join(matchseq))
+		outf.write("CONSENSUS_"+ spp+"_"+ str(len(subgroup))+ "_" +suffix+"\t"+"\t".join(matchresult[1])) # CONSENSUS_XXXX_
 	else:
 		consensus_success = "_N_"
 	outf.close()
 	
 	#---------------- write log file --------------------
-	logf.write(spp+"\t"+suffix+"\t"+str(totalspps)+"\t"+str(totalmismatch)+"\t"+str(len(subgroup))+"\t"+str(mismatch)+"\t"+consensus_success+"\t"+radioA + "\n")
+	logf.write(spp+"\t"+suffix+"\t"+str(totalspps)+"\t"+str(totalmismatch)+"\t"+str(len(subgroup))+"\t"+str(mismatch)+"\t"+consensus_success+"\t"+ratioA + "\n")
 
 #----------------------------- main ------------------------------------------------------
 
 # ----- get options and file names and open files -----
-if len(sys.argv) == 4:
+if len(sys.argv) == 5:
 	infile=sys.argv[1]
 	windowsize = float(sys.argv[2])		# Ratio distance between groups
 	windowstep = float(sys.argv[3])		# sliding window size
+	maxmismatch = int(sys.argv[3])
 elif len(sys.argv) == 2:
 	infile=sys.argv[1]
 	windowsize = 0.1 			# default windowsize			
 	windowstep = 0.05			# default windowstep
+	maxmismatch = 10			# max No. of mismatches to generate consensus seq
 else:
 	print len(sys.argv)
-	print 'Usage: [1]infile ([2]windowsize [3]windowstep: optional)'
+	print 'Usage: [1]infile ([2]window size [3]window step [3]max mismatch: optional)'
 	sys.exit(1)
 	
 if(windowsize < windowstep):
@@ -326,12 +371,13 @@ getData(inlines)
 # ----- open log file to write -----------------
 logfile=infilebase+".log"
 logf =open_file(logfile,'w')
-logf.write("spp\tgroup_id\ttotal_spps\ttotal_mismatch\tspps_in_subgroup\tmismatch_in_subgroup\tconsensus_success\tradio_group\n")
+logf.write("spp\tgroup_id\ttotal_spps\ttotal_mismatch\tspps_in_subgroup\tmismatch_in_subgroup\tconsensus_success\tratio_group\n")
 
 # ------ generate output file -------------------	
 for q in queue:
+	print q
 	totalspps = len(content[q])			# total No. of spp
-	mismatchseq = getconsensus(content[q])		# get total mismatches.
+	mismatchseq = getconsensus(q, '0', content[q])		# get total mismatches.
 	totalmismatch = mismatchseq.pop()
 	findgroup(q)					# find group, write output file and log file
 logf.close()
