@@ -229,6 +229,7 @@ def getconsensus(spp, suffix, groupseq):
 	
 	matchseq = []
 	countstr = ""
+	consensusstr = ""
 	matchresult = []
 	countseq={}
 	fractseq={}
@@ -289,17 +290,19 @@ def getconsensus(spp, suffix, groupseq):
 			else:
 				matchseq.append(unisum[2])
 				
-	countstr += "COUNT_A_"+spp+"_"+suffix+"\t".join(countseq['A'].values()) + "\n"
-	countstr += "COUNT_B_"+spp+"_"+suffix+"\t".join(countseq['B'].values()) + "\n"
-	countstr += "COUNT_M_"+spp+"_"+suffix+"\t".join(countseq['M'].values()) + "\n"
-	countstr += "COUNT_AB_"+spp+"_"+suffix+"\t".join(countseq['AB'].values()) + "\n"
-	countstr += "COUNT_ALL_"+spp+"_"+suffix+"\t".join(countseq['ALL'].values()) + "\n"
-	countstr += "FRACT_A_"+spp+"_"+suffix+"\t".join(fractseq['A'].values()) + "\n"
-	countstr += "FRACT_B_"+spp+"_"+suffix+"\t".join(fractseq['B'].values()) + "\n"
-	countstr += "FRACT_M_"+spp+"_"+suffix+"\t".join(fractseq['M'].values()) + "\n"
+	countstr += "COUNT_A_"+spp+"_"+suffix+"\t"+"\t".join(countseq['A'].values()) + "\n"
+	countstr += "COUNT_B_"+spp+"_"+suffix+"\t"+"\t".join(countseq['B'].values()) + "\n"
+	countstr += "COUNT_M_"+spp+"_"+suffix+"\t"+"\t".join(countseq['M'].values()) + "\n"
+	countstr += "COUNT_AB_"+spp+"_"+suffix+"\t"+"\t".join(countseq['AB'].values()) + "\n"
+	countstr += "COUNT_ALL_"+spp+"_"+suffix+"\t"+"\t".join(countseq['ALL'].values()) + "\n"
+	countstr += "FRACT_A_"+spp+"_"+suffix+"\t"+"\t".join(fractseq['A'].values()) + "\n"
+	countstr += "FRACT_B_"+spp+"_"+suffix+"\t"+"\t".join(fractseq['B'].values()) + "\n"
+	countstr += "FRACT_M_"+spp+"_"+suffix+"\t"+"\t".join(fractseq['M'].values()) + "\n"
+	
+	consensusstr = "CONSENSUS_"+ spp+"_"+ str(len(groupseq))+ "_" +suffix+"\t"+"\t".join(matchseq)+ "\n"
 	
 	matchresult.append(countstr) # count informaiton
-	matchresult.append(matchseq) # consensus sequence
+	matchresult.append(consensusstr) # consensus sequence
 	matchresult.append(mismatch) # No. of mismatches
 	return matchresult
 
@@ -332,7 +335,7 @@ def printtable(spp, suffix, subgroup, matchresult, ratioA):
 	mismatch = matchresult.pop()
 	if(mismatch < maxmismatch): 		# write consensus seq
 		consensus_success = "_Y_"
-		outf.write("CONSENSUS_"+ spp+"_"+ str(len(subgroup))+ "_" +suffix+"\t"+"\t".join(matchresult[1])) # CONSENSUS_XXXX_
+		outf.write(matchresult[1]) # CONSENSUS_XXXX_
 	else:
 		consensus_success = "_N_"
 	outf.close()
@@ -347,7 +350,7 @@ if len(sys.argv) == 5:
 	infile=sys.argv[1]
 	windowsize = float(sys.argv[2])		# Ratio distance between groups
 	windowstep = float(sys.argv[3])		# sliding window size
-	maxmismatch = int(sys.argv[3])
+	maxmismatch = int(sys.argv[4])
 elif len(sys.argv) == 2:
 	infile=sys.argv[1]
 	windowsize = 0.1 			# default windowsize			
@@ -355,7 +358,7 @@ elif len(sys.argv) == 2:
 	maxmismatch = 10			# max No. of mismatches to generate consensus seq
 else:
 	print len(sys.argv)
-	print 'Usage: [1]infile ([2]window size [3]window step [3]max mismatch: optional)'
+	print 'Usage: [1]infile ([2]window size [3]window step [4]max mismatch: optional)'
 	sys.exit(1)
 	
 if(windowsize < windowstep):
