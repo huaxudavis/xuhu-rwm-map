@@ -10,14 +10,15 @@ This script group spp sequences and generates consensus sequence from loc file.
 
 === Program logic flow ===
   * [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/split_flowchart.pdf split_flowchart.pdf]
+  * [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/README_split_spps.doc README_split_spps.doc]
 
 === Parameters ===
   * Input loc file
-  * windowsize and windowstep (optional)
+  * window size, window step and max mismatch(optional)
 
 === Sample Command ===
 {{{
-$ python split_spps_v4.py haplo_test_50K.loc 0.1 0.05
+$ python split_spps_v4.py haplo_test_50K.loc 0.1 0.05 10
 
 BACP
 BACQ
