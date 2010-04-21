@@ -272,9 +272,8 @@ def getconsensus(spp, suffix, groupseq):
 			fractseq['B'][j] = str(int(round((float(countsum[1])/float(countsum[0]+countsum[1]))*100)))
 		fractseq['M'][j] = str(int(round((float(countsum[2])/float(countsum[0]+countsum[1]+countsum[2]))*100)))	
 		
-
-		
 		# get the consensus seq
+		countsum = map(lambda t: (float(sum.count(t))/float(len(sum))), unisum)		
 		if(len(unisum)==1): 
 			matchseq.append(unisum[0])
 		elif(len(unisum)==2):
