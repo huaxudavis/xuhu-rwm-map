@@ -213,7 +213,7 @@ def findgroup(q):
 		suffix = '2'			
 		for id in groupx[order2]:	
 			subgroup2[id] = seq[id]
-		ratioA = str(windowstep*order2)+"-"+str(windowsize+windowstep*order1)	
+		ratioA = str(windowstep*order2)+"-"+str(windowsize+windowstep*order2)	
 		matchseq2 = getconsensus(spp, suffix, subgroup2)  
 		printtable(spp, suffix, subgroup2, matchseq2, ratioA)
 
@@ -255,6 +255,8 @@ def getconsensus(spp, suffix, groupseq):
 			
 		# get No. of each letter	
 		letter = ['A', 'B', '-']
+		### 
+		countsum_fract = map(lambda t: (float(sum.count(t))/float(len(sum))), unisum)
 		countsum = map(lambda t: (sum.count(t)), letter)		
 		
 		countseq['A'][j] = str(countsum[0])
@@ -272,33 +274,34 @@ def getconsensus(spp, suffix, groupseq):
 			fractseq['B'][j] = str(int(round((float(countsum[1])/float(countsum[0]+countsum[1]))*100)))
 		fractseq['M'][j] = str(int(round((float(countsum[2])/float(countsum[0]+countsum[1]+countsum[2]))*100)))	
 		
+
+		
 		# get the consensus seq
-		countsum = map(lambda t: (float(sum.count(t))/float(len(sum))), unisum)		
 		if(len(unisum)==1): 
 			matchseq.append(unisum[0])
 		elif(len(unisum)==2):
-			if(countsum[0] >= countsum[1]):
+			if(countsum_fract[0] >= countsum_fract[1]):
 				matchseq.append(unisum[0])
 			else:
 				matchseq.append(unisum[1])
 		else:
-			if(countsum[0] >= 0.5):
+			if(countsum_fract[0] >= 0.5):
 				matchseq.append(unisum[0])
-			elif(countsum[1] >= countsum[2]):
+			elif(countsum_fract[1] >= countsum_fract[2]):
 				matchseq.append(unisum[1])
 			else:
 				matchseq.append(unisum[2])
 				
-	countstr += "COUNT_A_"+spp+"_"+suffix+"\t"+"\t".join(countseq['A'].values()) + "\n"
-	countstr += "COUNT_B_"+spp+"_"+suffix+"\t"+"\t".join(countseq['B'].values()) + "\n"
-	countstr += "COUNT_M_"+spp+"_"+suffix+"\t"+"\t".join(countseq['M'].values()) + "\n"
-	countstr += "COUNT_AB_"+spp+"_"+suffix+"\t"+"\t".join(countseq['AB'].values()) + "\n"
-	countstr += "COUNT_ALL_"+spp+"_"+suffix+"\t"+"\t".join(countseq['ALL'].values()) + "\n"
-	countstr += "FRACT_A_"+spp+"_"+suffix+"\t"+"\t".join(fractseq['A'].values()) + "\n"
-	countstr += "FRACT_B_"+spp+"_"+suffix+"\t"+"\t".join(fractseq['B'].values()) + "\n"
-	countstr += "FRACT_M_"+spp+"_"+suffix+"\t"+"\t".join(fractseq['M'].values()) + "\n"
+	countstr += "____COUNT_A___"+spp+"_"+suffix+"\t"+"\t".join(countseq['A'].values()) + "\n"
+	countstr += "____COUNT_B___"+spp+"_"+suffix+"\t"+"\t".join(countseq['B'].values()) + "\n"
+	countstr += "____COUNT_M___"+spp+"_"+suffix+"\t"+"\t".join(countseq['M'].values()) + "\n"
+	countstr += "____COUNT_AB__"+spp+"_"+suffix+"\t"+"\t".join(countseq['AB'].values()) + "\n"
+	countstr += "____COUNT_ALL_"+spp+"_"+suffix+"\t"+"\t".join(countseq['ALL'].values()) + "\n"
+	countstr += "____FRACT_A___"+spp+"_"+suffix+"\t"+"\t".join(fractseq['A'].values()) + "\n"
+	countstr += "____FRACT_B___"+spp+"_"+suffix+"\t"+"\t".join(fractseq['B'].values()) + "\n"
+	countstr += "____FRACT_M___"+spp+"_"+suffix+"\t"+"\t".join(fractseq['M'].values()) + "\n"
 	
-	consensusstr = "CONSENSUS_"+ spp+"_"+ str(len(groupseq))+ "_" +suffix+"\t"+"\t".join(matchseq)+ "\n"
+	consensusstr = "_CONSENSUS_"+ spp+"_"+ str(len(groupseq))+ "_" +suffix+"\t"+"\t".join(matchseq)+ "\n"
 	
 	matchresult.append(countstr) # count informaiton
 	matchresult.append(consensusstr) # consensus sequence
