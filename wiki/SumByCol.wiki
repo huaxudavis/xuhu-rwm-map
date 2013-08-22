@@ -1,0 +1,23 @@
+#Script to sum the occurrence of 'A','B','-','U' for scaffolds in a group.
+
+== Summary ==
+
+This python script sum the occurrence of 'A', 'B','-','U' for certain number of scaffolds per group 
+
+== Details ==
+
+=== Parameters ===
+  * Input genotype file
+  * number of scaffolds per group to sum
+
+=== Sample Command ===
+{{{
+$ python 04-SumByColXu.py genotypes-test.tsv 100 
+ 
+}}}
+
+=== Input and Output ===
+
+  * Input file: -- genotype file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/genotypes-test.tsv genotypes-test.tsv]
+
+  * Output file: -- parsed file with SNP counts: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/sum_genotypes-test.tsv sum_genotypes-test.tsv]
