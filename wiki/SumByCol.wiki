@@ -1,9 +1,9 @@
 #labels Featured
-#Script to sum the occurrence of 'A','B','-','U' for scaffolds in a group.
+#Script to summarize the genotype data for groups of SNPs.
 
 == Summary ==
 
-This python script sum the occurrence of 'A', 'B','-','U' for certain number of scaffolds per group 
+This python script summarize the genotype data for groups of SNPs along the reference sequence – for example sum the occurrence of 'A', 'B','-','U' for groups of 20 consecutive SNPs.  
 
 == Details ==
 
