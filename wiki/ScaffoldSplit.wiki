@@ -20,6 +20,6 @@ $ python  06-ScaffoldSplit.py  test100SNPchunks.txt  88 30
 
 === Input and Output ===
 
-  * Input file: -- genotype file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/test100SNPchunks.txt test100SNPchunks.txt]
+  * Input file: -- genotype file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/test100SNPchunks.tsv test100SNPchunks.tsv]
 
   * Output file: -- splited file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/split_test100SNPchunks.txt split_test100SNPchunks.txt]
