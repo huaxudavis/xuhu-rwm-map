@@ -14,6 +14,11 @@ This python script sum the occurrence of 'A', 'B','-','U' for certain number of 
 === Sample Command ===
 {{{
 $ python 04-SumByColXu.py genotypes-test.tsv 100 
+
+Scaffold1:6122
+Scaffold2:243
+Scaffold3:305
+0.337430000305
  
 }}}
 
