@@ -1,5 +1,5 @@
 #labels Featured
-#This python script split the mis-assembled SNP chunk files  
+#This python script split the mis-assembled SNP chunks  
 
 == Summary ==
 
