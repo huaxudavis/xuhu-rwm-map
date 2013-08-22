@@ -1,3 +1,4 @@
+#labels Featured
 #Script to split haplo file and generate consensus
 
 == Summary ==
