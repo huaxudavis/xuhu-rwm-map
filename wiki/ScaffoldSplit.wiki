@@ -14,7 +14,7 @@ This script will split the mis-assembled scaffolds at SNP-groups that show a hig
 
 === Sample Command ===
 {{{
-$ python  06-ScaffoldSplit.py  test100SNPchunks.txt  88 30
+$ python  05-ScaffoldSplit.py  test100SNPchunks.txt  88 30
  
 }}}
 
