@@ -1,6 +1,6 @@
 #!/usr/bin/python
 ##################################################################################
-# Atuthor: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
+# Author: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
 # Date: Aug.16 2013; last update: Aug.29 2013
 # Description:
 #
@@ -21,10 +21,10 @@
 #
 ######################################################################################
 
-import csv, os, sys
+import csv, os, sys, timeit, math
 from os.path import basename, splitext
 from itertools import islice
-import timeit
+
 
 ######################################################
 #count genotype
@@ -50,6 +50,10 @@ else:
     print 'Usage: [1]infile, [2]num of lines/bases to sum, [3]opt: l or b, [4]format: f or s'
     sys.exit(1) 
 
+if format == 's' and opt == 'b':
+    print 'b option can not use with s option!'
+    sys.exit(0)
+
 infbase = splitext(basename(infile))[0]
 outfile = 'sum_' + infbase + '.tsv'
 
@@ -66,29 +70,32 @@ for row in tsvidreader:
     if row == [] or row == '\n':
         continue
     if len(row)<2 and len(row)>0:
-    #    print row
         continue
     if first == 1:
         curid = row[0]
         first = 0
-        if opt == 'b':
-            cutoff = (int(row[1])/cnt+1)*cnt
+        rowlen = len(row)
         
     if row[0] != curid:  # next scaffold
         rowlist = rowlist + [[curid, SNPcount]]
-        SNPcount = 1
+        SNPcount = 0
         curid = row[0]
-        cutoff = (int(row[1])/cnt+1)*cnt
+        if opt == 'b':    
+            cutoff = cnt
+
+    if opt == 'l':
+        SNPcount = SNPcount + 1     # count num of SNPs in scaffold group
     else:
-        if opt == 'l':
-            SNPcount = SNPcount + 1     # count num of SNPs in scaffold group
-        else:
-            if int(row[1]) <= cutoff:
-                SNPcount = SNPcount +1  # count num of SNPs in position range
-            else: 
+        if int(row[1]) <= cutoff:
+            SNPcount = SNPcount +1  # count num of SNPs in position range
+        else: 
+            rowlist = rowlist + [[curid, SNPcount]]
+            cutoff = cutoff+cnt
+            SNPcount = 0
+            while int(row[1]) > cutoff:
                 rowlist = rowlist + [[curid, SNPcount]]
-                cutoff = (int(row[1])/cnt+1)*cnt  # jump to next range
-                SNPcount = 1
+                cutoff = cutoff+cnt                    
+            SNPcount = 1  
                 
 rowlist = rowlist + [[curid, SNPcount]]
 
@@ -102,9 +109,9 @@ tsvinreader = csv.reader(tsvin, delimiter='\t')
 tsvoutwriter = csv.writer(tsvout, delimiter='\t')
 
 if format == 'f': 
-    s = 2
+    s = 2   # id and position columns
 else:
-    s = 4
+    s = 4   # id, start, end, and count columns
 
 if opt == 'l':
     for alist in rowlist:
@@ -162,26 +169,36 @@ if opt == 'l':
             if format != 'f':
                 blank_lines = list(islice(tsvinreader, 2))
             
-else:        
+else:     
+    id = 'first' # first scaffold
+
     for rlist in rowlist: # loop by position range for each scaffold
+        if rlist[0] != id: # New scaffold
+            posStart = 0
+            posEnd = 0
+            if id != 'first': # print two extra lines at the end of previous scaffold if it is not the first one
+                tsvoutwriter.writerow([])
+                tsvoutwriter.writerow([])
+    
         id = rlist[0]
         SNPlines = rlist[1]
-        print id + ":" + str(SNPlines)
+        print id + ":" + str(SNPlines)        
         total = []
-        cnt_lines = list(islice(tsvinreader, SNPlines))  # get lines by range
-        posStart = cnt_lines[0][1]
-        if format == 'f':
-            posEnd = cnt_lines[SNPlines-1][1]
+        if SNPlines != 0:            
+            cnt_lines = list(islice(tsvinreader, SNPlines))  # get lines by range
+            posStart = (int(cnt_lines[0][1])/cnt)*cnt+1      
+            posEnd = ((int(cnt_lines[SNPlines-1][1])/cnt)+1)*cnt
             sumcnt = SNPlines
-        else:
-            posEnd = cnt_lines[SNPlines-1][2]
-            sumcnt = sum(int(z) for z in zip(*cnt_lines)[s-1])
-        for x in zip(*cnt_lines)[s:]:               # convert to list of columns and count
-            total = total + genotypesum(x)       
+            for x in zip(*cnt_lines)[s:]:               # convert to list of columns and count
+                total = total + genotypesum(x)
+                
+        else:      # no data in this range
+            posStart = posEnd +1
+            posEnd = posEnd + cnt
+            sumcnt = 0
+            total = [0]*(rowlen-s)*4
         tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)    
-        if format != 'f':
-            blank_lines = list(islice(tsvinreader, 2))
-                     
+
 stop = timeit.default_timer()
 print stop - start 
 
