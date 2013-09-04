@@ -55,7 +55,10 @@ if format == 's' and opt == 'b':
     sys.exit(0)
 
 infbase = splitext(basename(infile))[0]
-outfile = 'sum_' + infbase + '.tsv'
+if opt == 'l':
+    outfile = 'sumByL_' + infbase + '.tsv'
+else:
+    outfile = 'sumByB_' + infbase + '.tsv' 
 
 # ----- count the number of lines for each scaffold -------
 tsvid = open(infile,'rb')
