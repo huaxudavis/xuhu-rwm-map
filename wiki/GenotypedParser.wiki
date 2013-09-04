@@ -1,4 +1,4 @@
-#labels Featured
+#labels Deprecated
 #Script to count SNPs and generate genotype data.
 
 == Summary ==
