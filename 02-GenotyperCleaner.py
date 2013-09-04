@@ -2,8 +2,8 @@
 import csv, os, sys
 from os.path import basename, splitext
 ##################################################################################
-# Author: Huaqin Xu (huaxu@ucdavis.edu)
-# Date: Aug.15 2013
+# Atuthor: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
+# Date: Aug.15 2013; last updated Aug.29 2013
 # Description:
 #
 # This python script sum the occurence of [ATCG|atcg] or [,.] for each scaffold,
@@ -14,18 +14,25 @@ from os.path import basename, splitext
 #	1.input file.
 #	2.number of sample
 #       3.opt: cleaned (1) or not cleaned(0)
+# Note:
+#  The following thresholds per SNP are hard-coded in the script, but can be easily edited:
+#  - if more than one sample displays an indel in the alignment, the SNP will be removed; the data point containing the indel will be set to 'missing data' in any case
+#  - if data for more than 80% of the samples are missing (M), the SNP will be removed.
+#  - if more than 5% of the samples are genotyped as heterozygous (U), the SNP will be removed.
+#  - if the genotyping data are very skewed (minor allele frequency < 10%), the SNP will be removed.
 #		  
 # Output: count files and genotype files, if option is 1: cleaned genotype file and cleanCount file.
 #
 ######################################################################################
-
 # count in cells
 def countcell(cnt, pu):
+    global flag
     Vcnt = pu.count("a") + pu.count("A") + pu.count("c") + pu.count("C") +pu.count("t") + pu.count("T") + pu.count("g") + pu.count("G")
     Ccnt = pu.count(",") + pu.count(".")
     if int(cnt) != Vcnt + Ccnt:
         Vcnt = 0
         Ccnt = 0
+        flag = flag + 1
     C = [Vcnt, Ccnt]    
     return C
 
@@ -83,6 +90,10 @@ else:
     print len(sys.argv)
     print 'Usage: [1]infile, [2]num of samples, [3]opt: 0 or 1'
     sys.exit(1)
+    
+if samples <0:
+    print "The number of samples must be a positive integer."
+    sys.exit(1)
 
 infbase = splitext(basename(infile))[0]
 outfile1 = 'parsed_' + infbase + '.tsv'
@@ -107,12 +118,23 @@ if opt == 1:
 # ------ loop through each line to count ocurrence -------
 
 for row in tsvinreader:
+    if len(row) != (samples+1)*3 :
+        print "Unmatched number of samples"
+        sys.exit(0)
+        
     cntresult = [row[0]] + [row[1]]
     gtresult = [row[0]] + [row[1]]
+    flag = 0
     for x in range(1,samples+1):
         Cnt = countcell(row[x*3] , row[x*3+1])
         cntresult = cntresult + Cnt   # countcell has two input values: cnt and teh cell with the genotypes
         gtresult = gtresult + genotype(Cnt)
+    
+    ##### updated 8/27/2013
+    if flag > 1:
+        cntresult = [row[0]] + [row[1]] + [0]*samples*2  # fill the whole row with [0,0]
+    #####
+        
     tsvoutwriter1.writerow(cntresult)
     tsvoutwriter2.writerow(gtresult)
     
