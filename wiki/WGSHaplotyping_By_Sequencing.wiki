@@ -10,7 +10,7 @@ Required software: CLC (for identification and filtering of parental SNPs), BWA 
 == Link to Scripts ==
 
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/01-CLC_Table_Converter.py 01-CLC_Table_Converter.py]
-  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/02-GenotyperParser.py 02-GenotyperParser.py]
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/02-GenotyperCleaner.py 02-GenotyperCleaner.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/03-SumByGroup.py 03-SumByGroup.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/04-GroupHaplotyper.py 04-GroupHaplotyper.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/05-ScaffoldSplit.py 05-ScaffoldSplit.py]
@@ -38,7 +38,7 @@ samtools view -uS sample1.sam | samtools sort - outputPrefix
 {{{
 samtools mpileup -Q 10 -I -l HQ_SNP_loci_BED-file.tsv -f ref_genome.fa  sample1.bam sample2.bam sample3.bam etc_all_samples.bam…. > all_samples.mpileup
 }}}
-  # Use the 02-GenotypingParser.py script to generate two tables from mpileup file: One table with the SNP-counts per cell of the table ( ”parsed~”) and one of the genotype calls ( ”genotyped~”).  The script will also remove SNPs from the tables for which the genotyping data show alignments to indels.  Generate the count and genotype tables with:
+  # Use the 02-GenotyperCleaner.py script to generate two tables from mpileup file: One table with the SNP-counts per cell of the table ( ”parsed~”) and one of the genotype calls ( ”genotyped~”).  The script will also remove SNPs from the tables for which the genotyping data show alignments to indels.  Generate the count and genotype tables with:
 {{{
 python 02-GenotyperCleaner.py  all_samples.mpileup number_of_samples 0 &
 }}}
