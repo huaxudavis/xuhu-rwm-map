@@ -10,7 +10,7 @@ Required software: CLC (for identification and filtering of parental SNPs), BWA 
 == Link to Scripts ==
 
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/01-CLC_Table_Converter.py 01-CLC_Table_Converter.py]
-  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/02-GenotypingParser.py 02-GenotypingParser.py]
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/02-GenotyperParser.py 02-GenotyperParser.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/03-SumByGroup.py 03-SumByGroup.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/04-GroupHaplotyper.py 04-GroupHaplotyper.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/05-ScaffoldSplit.py 05-ScaffoldSplit.py]
