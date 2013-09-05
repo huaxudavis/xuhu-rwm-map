@@ -7,6 +7,13 @@ The scripts aim to filter out poor SNPs, genotype SNPs (in a primitive way becau
 
 Required software: CLC (for identification and filtering of parental SNPs), BWA  (or another aligner: e.g. CLC, Bowtie, … to generate alignments as BAM files ), Samtools (to generate mpileup files), Python (v2.XX), Excel (for data visualization).   Most of the python scripts have some documentation inside in the comments.  The thresholds for filtering and genotyping might have to be adjusted depending on data sets – please modify these settings by editing the scripts.
 
+== Link to Scripts ==
+
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/01-CLC_Table_Converter.py 01-CLC_Table_Converter.py]
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/02-GenotypingParser.py 02-GenotypingParser.py]
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/03-SumByGroup.py 03-SumByGroup.py]
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/04-GroupHaplotyper.py 04-GroupHaplotyper.py]
+  * [http://xuhu-rwm-map.googlecode.com/svn/trunk/05-ScaffoldSplit.py 05-ScaffoldSplit.py]
 
 == Details Steps ==
 
@@ -31,13 +38,13 @@ samtools view -uS sample1.sam | samtools sort - outputPrefix
 {{{
 samtools mpileup -Q 10 -I -l HQ_SNP_loci_BED-file.tsv -f ref_genome.fa  sample1.bam sample2.bam sample3.bam etc_all_samples.bam…. > all_samples.mpileup
 }}}
-  # Use the 02-GenotypingParserXu.py script to generate two tables from mpileup file: One table with the SNP-counts per cell of the table ( ”parsed~”) and one of the genotype calls ( ”genotyped~”).  The script will also remove SNPs from the tables for which the genotyping data show alignments to indels.  Generate the count and genotype tables with:
+  # Use the 02-GenotypingParser.py script to generate two tables from mpileup file: One table with the SNP-counts per cell of the table ( ”parsed~”) and one of the genotype calls ( ”genotyped~”).  The script will also remove SNPs from the tables for which the genotyping data show alignments to indels.  Generate the count and genotype tables with:
 {{{
 python 02-GenotyperCleaner.py  all_samples.mpileup number_of_samples 0 &
 }}}
    Optional: if the last parameter is set to 1 , this script removes SNPs with obvious artifacts (low efficiency, very skewed genotype ratio, etc.),and two extra files will be generated: one with the genotype counts per SNP (“GTcounts_” to aid the QC of the data) and one a new genotype table from which the artifactual SNPs have been removed ( “cleanedGTs_”).
 {{{
-python 02-GenotyperCleanerXu.py  all_samples.mpileup number_of_samples 1 &
+python 02-GenotyperCleaner.py  all_samples.mpileup number_of_samples 1 &
 }}}
    The following thresholds per SNP are hard-coded in the script, but can be easily edited:
    * if more than one sample displays an indel in the alignment, the SNP will be removed; the data point containing the indel will be set to “missing data” in any case
@@ -48,12 +55,12 @@ python 02-GenotyperCleanerXu.py  all_samples.mpileup number_of_samples 1 &
 {{{  
 python 03-SumByGroup.py cleaned-genotype-table.tsv number_of_SNPs_per_group  &
 }}}
-  # Convert the group counts into group haplotypes with the GroupHaplotyper script.  The haplotyping thresholds are hardcoded in the script and should be edited there.  If the B/A call ratio is between 0.2 and 5, the group is typed as heterozygous; if it is lower than 0.2 the haplotype is set to A; if it is bigger than 5, the haplotype is set to B:
+  # Convert the group counts into group haplotypes with the 04-GroupHaplotyper.py script.  The haplotyping thresholds are hardcoded in the script and should be edited there.  If the B/A call ratio is between 0.2 and 5, the group is typed as heterozygous; if it is lower than 0.2 the haplotype is set to A; if it is bigger than 5, the haplotype is set to B:
 {{{
 python  04-GroupHaplotyper.py  chunked-clean-genotype-table.tsv  number-of-samples &
 }}}
   # Import the generated table into Excel and use conditional formatting for A’s , B’s and U’s visualize the genotype data like this:
-  # Split the mis-assembled scaffolds with 06-ScaffoldSplit at SNP-groups that show a high number of differences (e.g. for more than 25% of the samples) to their neighboring SNP-groups.  The SNP-group a the edge is removed.  The new scaffolds will get a new unique name.   As the cutoff-number one can choose the number of allowed differences between the haplotypes of adjacent SNP groups (for example: 25 ### for 88 samples).
+  # Split the mis-assembled scaffolds with 05-ScaffoldSplit at SNP-groups that show a high number of differences (e.g. for more than 25% of the samples) to their neighboring SNP-groups.  The SNP-group a the edge is removed.  The new scaffolds will get a new unique name.   As the cutoff-number one can choose the number of allowed differences between the haplotypes of adjacent SNP groups (for example: 25 ### for 88 samples).
 {{{
 python  05-ScaffoldSplit.py  SNP-group-table.tsv  number-of-samples cutoff-number &
 }}}
