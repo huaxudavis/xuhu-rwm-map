@@ -1,0 +1,43 @@
+#labels Featured
+#Script to summarize the genotype data for groups of SNPs.
+
+== Summary ==
+
+This python script summarize the genotype data for groups of SNPs along the reference sequence – for example sum the occurrence of 'A', 'B','-','U' for groups of 20 consecutive SNPs.  
+
+== Details ==
+
+=== Parameters ===
+  * Input file
+  * number of scaffolds per group to sum
+    * if opt is l: it is the number of lines for each scaffold to sum, if num set to 0, scaffold will sum by ID name;
+    * if opt is b, it is the position range to sum.
+  * opt: l - sum by lines or b - sum by position range
+  * format: f - first run or s - second run(has two extra blank lines between groups and two extra cols); s option does not work with b option
+
+=== Sample Command ===
+{{{
+$ python 03-SumByGroup.py genotypes-test2.tsv 1000000 b f
+
+Scaffold1:1062
+Scaffold1:1497
+Scaffold1:2195
+Scaffold1:1368
+Scaffold2:2
+Scaffold2:1
+Scaffold2:0
+Scaffold2:240
+Scaffold3:0
+Scaffold3:3
+Scaffold3:1
+Scaffold3:301
+0.288136959076
+
+ 
+}}}
+
+=== Input and Output ===
+
+  * Input file: -- genotype file: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/genotypes-test2.tsv genotypes-test2.tsv]
+
+  * Output file: -- parsed file with start position, end position, SNP counts, and genotype data: [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/sum_genotypes-test2.tsv sum_genotypes-test2.tsv]
