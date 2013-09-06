@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# this crates a BED file from table of SNPs exported from CLC
+# the resulting tab-delimited BED file has threee columns: chromosome-name, coordinate-before-SNP, coordinate-of-the-SNP
+
 import csv, os, sys
 from os.path import basename, splitext
 
