@@ -4,7 +4,12 @@
 # Date: Aug.16 2013, last update: Aug.29 2013
 # Description:
 #
-# This python script split the SNP chunk files by the turning points 'A'<->'B'
+# This python script splits scaffolds in a file of grouped SNP haplotypes at points where 
+# consecutive SNP-groups show more differences in their 'A' and 'B'calls than allowed 
+# be the 'cutoff' parameter.
+# The scripts generates a new haplotype table in which the split scaffolds have been renamed
+# and a log file which provides the number of scaffolds before and after splitting as 
+# a list of the split locations.
 #
 # =================================================================================
 # input arguments:
@@ -12,7 +17,7 @@
 #   2. number of samples
 #   3. cutoff (for example: 25)
 #
-# Output: split file.
+# Output: split scaffold haplotypefile, log file
 #
 ######################################################################################
 
