@@ -2,21 +2,24 @@
 import csv, os, sys
 from os.path import basename, splitext
 ##################################################################################
-# Atuthor: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
+# Authors: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
 # Date: Aug.15 2013; last updated Aug.29 2013
 # Description:
 #
-# This python script sum the occurence of [ATCG|atcg] or [,.] for each scaffold,
-# and also convert count result to genotype table
-# and the genotype table can be cleaned if the option is 1,
+# This python script sums the occurences of SNP consensus calls and variant calls
+# (i.e. [,.] or [ATCG|atcg]) in mpileup files for each SNP.
+# It also converts the count results into a genotype table.
+# An additional 'cleaned' genotype table from which SNPs with obvious artifacts are removed
+# is generated if the option '1' is applied.
 # =================================================================================
 # input arguments:
 #	1.input file.
 #	2.number of sample
-#       3.opt: cleaned (1) or not cleaned(0)
+#  3.opt: cleaned (1) or not cleaned(0)
 # Note:
 #  The following thresholds per SNP are hard-coded in the script, but can be easily edited:
-#  - if more than one sample displays an indel in the alignment, the SNP will be removed; the data point containing the indel will be set to 'missing data' in any case
+#  - if more than one sample displays an indel in the alignment, the SNP will be removed;
+#    the data point containing the indel will be set to 'missing data' in any case.
 #  - if data for more than 80% of the samples are missing (M), the SNP will be removed.
 #  - if more than 5% of the samples are genotyped as heterozygous (U), the SNP will be removed.
 #  - if the genotyping data are very skewed (minor allele frequency < 10%), the SNP will be removed.
