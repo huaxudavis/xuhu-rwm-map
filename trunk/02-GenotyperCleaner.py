@@ -21,7 +21,7 @@ from os.path import basename, splitext
 #  - if more than one sample displays an indel in the alignment, the SNP will be removed;
 #    the data point containing the indel will be set to 'missing data' in any case.
 #  - if data for more than 80% of the samples are missing (M), the SNP will be removed.
-#  - if more than 5% of the samples are genotyped as heterozygous (U), the SNP will be removed.
+#  - if more than 50% of the called genotypes are heterozygous (U), the SNP will be removed.
 #  - if the genotyping data are very skewed (minor allele frequency < 10%), the SNP will be removed.
 #		  
 # Output: count files and genotype files, if option is 1: cleaned genotype file and cleanCount file.
@@ -65,12 +65,13 @@ def genotypecount(row, samples):
     A = row.count("A")
     B = row.count("B")
     M = row.count("-")
+    S = U + A + B
     R = ""
 
     F = ""
     if M > 0.8 * samples :
         F = F + "M"
-    if U > 0.05 * samples:
+    if U > 0.5 * S :
         F = F + "U"
     if A == 0 or B == 0:
         F = F + "Y"
