@@ -69,15 +69,15 @@ def genotypecount(row, samples):
     R = ""
 
     F = ""
-    if M > 0.8 * samples :
+    if M > 0.8 * samples :    # Snps with more than 80% missing data points are flagged
         F = F + "M"
-    if U > 0.5 * S :
+    if U > 0.5 * S :    # raised the cutoff threshold from 5% of the sample number (in versions prior to r63), to 50% of genoytpes fo rflagging SNPs of unexpected heterozygosity
         F = F + "U"
-    if A == 0 or B == 0:
+    if A == 0 or B == 0:  #  monotypic SNPs are flagged
         F = F + "Y"
     if A != 0 and B != 0 :
         R = round((A/float(B)), 2)
-    if R < 0.1 or R > 9:
+    if R < 0.1 or R > 9:   #  SNPs with severely skewed genotype ratios (e.g. MAF less than 10%) are flagged
         F = F + "X"
 
     C = [U, A, B, M, R, F]
