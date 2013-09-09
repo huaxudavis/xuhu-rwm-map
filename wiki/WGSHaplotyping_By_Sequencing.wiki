@@ -60,9 +60,11 @@ python 03-SumByGroup.py cleaned-genotype-table.tsv number_of_SNPs_per_group  &
 python  04-GroupHaplotyper.py  chunked-clean-genotype-table.tsv  number-of-samples &
 }}}
   # Import the generated table into Excel and use conditional formatting for A’s , B’s and U’s visualize the genotype data like this:
+[http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8.png http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8.png]
   # Split the mis-assembled scaffolds with 05-ScaffoldSplit at SNP-groups that show a high number of differences (e.g. for more than 25% of the samples) to their neighboring SNP-groups.  The SNP-group a the edge is removed.  The new scaffolds will get a new unique name.   As the cutoff-number one can choose the number of allowed differences between the haplotypes of adjacent SNP groups (for example: 25 ### for 88 samples).
 {{{
 python  05-ScaffoldSplit.py  SNP-group-table.tsv  number-of-samples cutoff-number &
 }}}
    As a result, the scaffold in the middle of the above picture is now split into two scaffolds and both can be mapped independently.
+[http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8split.png http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8split.png]
   # For mapping purposes a haplotype table for the split scaffolds can be generated with:
