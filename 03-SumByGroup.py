@@ -177,12 +177,16 @@ else:
 
     for rlist in rowlist: # loop by position range for each scaffold
         if rlist[0] != id: # New scaffold
+            if id != 'first': # print two extra lines at the end of previous scaffold if it is not the first one
+                tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)    
+                tsvoutwriter.writerow([])
+                tsvoutwriter.writerow([])
             posStart = 0
             posEnd = 0
-            if id != 'first': # print two extra lines at the end of previous scaffold if it is not the first one
-                tsvoutwriter.writerow([])
-                tsvoutwriter.writerow([])
-    
+        else:
+            posEnd = (int(posEnd/cnt)+1)*cnt        
+            tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)
+            
         id = rlist[0]
         SNPlines = rlist[1]
         print id + ":" + str(SNPlines)        
@@ -190,17 +194,17 @@ else:
         if SNPlines != 0:            
             cnt_lines = list(islice(tsvinreader, SNPlines))  # get lines by range
             posStart = (int(cnt_lines[0][1])/cnt)*cnt+1      
-            posEnd = ((int(cnt_lines[SNPlines-1][1])/cnt)+1)*cnt
+            posEnd = int(cnt_lines[SNPlines-1][1])      
             sumcnt = SNPlines
             for x in zip(*cnt_lines)[s:]:               # convert to list of columns and count
                 total = total + genotypesum(x)
                 
         else:      # no data in this range
             posStart = posEnd +1
-            posEnd = posEnd + cnt
             sumcnt = 0
             total = [0]*(rowlen-s)*4
-        tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)    
+                       
+    tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total) # print last block    
 
 stop = timeit.default_timer()
 print stop - start 
