@@ -44,7 +44,7 @@ def genotype(groupsize, Vcnt, Ccnt, Mcnt, Ucnt):
         GT = "A"
     elif Vcnt / Ccnt > max:
         GT = "B"
-    if Vcnt + Ccnt <= Ucnt:
+    if Vcnt + Ccnt < Ucnt:      # previously:  if Vcnt + Ccnt <= Ucnt:
         GT = "U"
     if Mcnt > 0.9 * gs:
         GT = "-"
