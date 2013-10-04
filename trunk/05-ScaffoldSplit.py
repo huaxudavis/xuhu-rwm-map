@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ##################################################################################
 # Author: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
-# Date: Aug.16 2013, last update: Aug.29 2013
+# Date: Aug.16 2013, last update: Oct.4 2013
 # Description:
 #
 # This python script splits scaffolds in a file of grouped SNP haplotypes at points where 
@@ -15,7 +15,8 @@
 # input arguments:
 #   1.input file.
 #   2. number of samples
-#   3. cutoff (for example: 25)
+#   3. cutoff for 'U' (for example: 25)
+#   4. cutoff for '-' (missing data)
 #
 # Output: split scaffold haplotypefile, log file
 #
@@ -28,13 +29,14 @@ from os.path import basename, splitext
 ######################################################
 
 # ----- get options and file names and open files -----
-if len(sys.argv) == 4:
+if len(sys.argv) == 5:
     infile = sys.argv[1]
     samples = int(sys.argv[2])
     cutoff = int(sys.argv[3])
+    cutoffM = int(sys.argv[4])
 else:
     print len(sys.argv)
-    print 'Usage: [1]infile, [2]# of samples, [3]cutoff'
+    print 'Usage: [1]infile, [2]# of samples, [3]cutoff of 'U', [4]cutoff of '-''
     sys.exit(1)
 
 infbase = splitext(basename(infile))[0]
@@ -80,6 +82,7 @@ for row in tsvinreader:
 
         else:
             cntU = row[4:].count('U') # count the occurence of 'U'
+            cntM = row[4:].count('-') # count the occurence of '-'
             mismatches = len([x for x, y in zip(prerow, row[4:]) if x != y]) # find mismatch items in previous and current rows
 
             if cntU >= cutoff:
@@ -88,7 +91,7 @@ for row in tsvinreader:
                 mismatches = len([x for x, y in zip(prerow, row[4:]) if x != y])
             prerow = row[4:]
 
-            if mismatches > cutoff: # split the mismatch parts
+            if mismatches > cutoff and cntM < cutoffM: # split the mismatch parts
                 curid = id + '_' + str(sub)
                 log.write(str([curid]) + str(row[2]) + '\n') # write the split position to log file
                 for r in rowlist: # print part of scaffold
