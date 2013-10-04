@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ##################################################################################
 # Author: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
-# Date: Aug.16 2013; last update: Aug.29 2013
+# Date: Aug.16 2013; last update: Oct.4 2013
 # Description:
 #
 # This python script sum the occurence of 'A', 'B','-','U' for each scaffold by defined lines  
@@ -9,12 +9,15 @@
 # =================================================================================
 # input arguments:
 #	1.input file.
-#	2.if opt is l: it is the number of lines for each scaffold to sum, if num set to 0, scaffold will sum by ID name;
+#	2.if opt is l, sum by line: number of lines to sum/number of lines to wrap up at the end, for example 100/20
+#                      sum by scaffold ID: num set to 0;
 #         if opt is b, it is the position range to sum.
 #       3.opt: l - sum by lines or b - sum by position range
 #       4.format: f - first run or s - second run(has two extra blank lines between groups and two extra cols after pos)
+#                 b option does not support second run.
 #
-# For example: python 03-SumByGroup.py x-haplo-split-sum.test.tab 0 l s
+# For example: python 03-SumByGroup.py x-haplo-split-sum.test.tab 100/20 l s
+#              python 03-SumByGroup.py x-haplo-split-sum.test.tab 100000 b f
 #  
 # Output: sum files.
 # Format: SNP group | start position | end position | # of SNPs in group | # of 'A' | # of 'B' | # of '-' | # of 'U' |......
@@ -42,12 +45,11 @@ start = timeit.default_timer()
 # ----- get options and file names and open files -----
 if len(sys.argv) == 5:
     infile = sys.argv[1]
-    cnt= int(sys.argv[2])
     opt = sys.argv[3]
     format = sys.argv[4]
 else: 
     print len(sys.argv)
-    print 'Usage: [1]infile, [2]num of lines/bases to sum, [3]opt: l or b, [4]format: f or s'
+    print 'Usage: [1]infile, [2]# of lines(bases) to sum/# of lines to round up, [3]opt: l or b, [4]format: f or s'
     sys.exit(1) 
 
 if format == 's' and opt == 'b':
@@ -56,9 +58,16 @@ if format == 's' and opt == 'b':
 
 infbase = splitext(basename(infile))[0]
 if opt == 'l':
+    if sys.argv[2].index('/') != -1:
+        cnt = int(sys.argv[2].split("/")[0])
+        endlimit = int(sys.argv[2].split("/")[1])
+    else:
+        print 'Please specify # of lines to sum/# of lines to wrap up !'
+        sys.exit(0)
     outfile = 'sumByL_' + infbase + '.tsv'
 else:
-    outfile = 'sumByB_' + infbase + '.tsv' 
+    cnt = int(sys.argv[2])
+    outfile = 'sumByB_' + infbase + '.tsv'    
 
 # ----- count the number of lines for each scaffold -------
 tsvid = open(infile,'rb')
@@ -122,7 +131,14 @@ if opt == 'l':
         SNPlines = alist[1]
         print id + ":" + str(SNPlines)
         if cnt > 0:  #sum by the predefined number
-            for m in range(SNPlines/cnt): # loop by each cnt-100 lines
+            if SNPlines%cnt > endlimit:
+                loopcnt = SNPlines/cnt
+                endline = SNPlines%cnt 
+            else:
+                loopcnt = SNPlines/cnt-1
+                endline = cnt + SNPlines%cnt
+                
+            for m in range(loopcnt): # loop by each cnt-100 lines
                 total = []
                 cnt_lines = list(islice(tsvinreader, cnt))  # get cnt-100 lines
                 posStart = cnt_lines[0][1]
@@ -136,20 +152,20 @@ if opt == 'l':
                     total = total + genotypesum(x)      
                 tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)
             
-            if SNPlines%cnt != 0: # get the rest of lines 
-                total = []
-                cnt_lines = list(islice(tsvinreader, SNPlines%cnt))
-                posStart = cnt_lines[0][1]
-                if format == 'f':
-                    posEnd = cnt_lines[SNPlines%cnt-1][1]
-                    sumcnt = SNPlines%cnt
-                else:
-                    posEnd = cnt_lines[SNPlines%cnt-1][2]
-                    sumcnt = sum(int(z) for z in zip(*cnt_lines)[s-1])
+            # get the rest of lines 
+            total = []
+            cnt_lines = list(islice(tsvinreader, endline))
+            posStart = cnt_lines[0][1]
+            if format == 'f':
+                posEnd = cnt_lines[endline-1][1]
+                sumcnt = endline
+            else:
+                posEnd = cnt_lines[endline-1][2]
+                sumcnt = sum(int(z) for z in zip(*cnt_lines)[s-1])
 
-                for x in zip(*cnt_lines)[s:]:
-                    total = total + genotypesum(x)       
-                tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)
+            for x in zip(*cnt_lines)[s:]:
+                total = total + genotypesum(x)       
+            tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total)
             tsvoutwriter.writerow([])
             tsvoutwriter.writerow([])
             if format != 'f':
@@ -204,7 +220,7 @@ else:
             sumcnt = 0
             total = [0]*(rowlen-s)*4
                        
-    tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total) # print last block    
+    tsvoutwriter.writerow([id]+ [posStart] + [posEnd] + [sumcnt] + total) # print last block
 
 stop = timeit.default_timer()
 print stop - start 
