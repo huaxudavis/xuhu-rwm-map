@@ -25,6 +25,10 @@
 import csv, sys
 from os.path import basename, splitext
 
+if sys.version_info[:2] <(2,6):
+    print "\nThis script requires a python interpreter of version 2.6x or 2.7X \nPlease see for example the free Anaconda python distributions."
+    sys.exit()
+
 infile = sys.argv[1]
 max = 1    # variants with this maximum length will be retained
 mnvb = 1   # maximum number of bases to retain per variant
