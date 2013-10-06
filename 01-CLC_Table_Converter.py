@@ -13,8 +13,8 @@
 #
 # input arguments:
 #   1.input file.
-#   2. optional: Max length of MNV to use (integer  < 6)  - for example use "2" if you do not want to retain MNVs at all.
-#                The default is: 2
+#   2. optional: Max length of MNV to use (integer  < 6)  - for example use "1" if you do not want to retain MNVs at all.
+#                The default is: 1
 #   3. optional: Number of MNV bases to convert into SNPs  (integer < 6)
 #
 # Usage:         python 01-CLC_Table_Converter.py  tab-separated-CLC-table.txt &
@@ -26,8 +26,9 @@ import csv, sys
 from os.path import basename, splitext
 
 infile = sys.argv[1]
-mnvb = 1
-max = 1
+max = 1    # variants with this maximum length will be retained
+mnvb = 1   # maximum number of bases to retain per variant
+
 
 if len(sys.argv) == 3 or len(sys.argv) == 4:
     max =  int(sys.argv[2]) + 1
@@ -61,7 +62,7 @@ for row in tsvinreader:
         if startpos > 0:
             position = startpos -1
         endpos = int(row[1].split("..")[1])
-        length = endpos - startpos + 1
+        length = endpos - startpos + 1     # length of variants exported from CLC version 6.05 and up
     else:
         startpos = int(row[1])
         if startpos > 0:
