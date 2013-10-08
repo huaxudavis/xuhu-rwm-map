@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ##################################################################################
 # Author: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
-# Date: Aug.16 2013; last update: Oct.4 2013
+# Date: Aug.16 2013; last update: Oct.8 2013
 # Description:
 #
 # This python script sum the occurence of 'A', 'B','-','U' for each scaffold by defined lines  
@@ -131,13 +131,16 @@ if opt == 'l':
         SNPlines = alist[1]
         print id + ":" + str(SNPlines)
         if cnt > 0:  #sum by the predefined number
-            if SNPlines%cnt > endlimit:
+            if SNPlines < cnt:
+                loopcnt = 0
+                endline = SNPlines%cnt                
+            elif SNPlines%cnt > endlimit:
                 loopcnt = SNPlines/cnt
                 endline = SNPlines%cnt 
-            else:
+            else: 
                 loopcnt = SNPlines/cnt-1
                 endline = cnt + SNPlines%cnt
-                
+  
             for m in range(loopcnt): # loop by each cnt-100 lines
                 total = []
                 cnt_lines = list(islice(tsvinreader, cnt))  # get cnt-100 lines
