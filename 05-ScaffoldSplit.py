@@ -36,7 +36,7 @@ if len(sys.argv) == 5:
     cutoffM = int(sys.argv[4])
 else:
     print len(sys.argv)
-    print 'Usage: [1]infile, [2]# of samples, [3]cutoff of 'U', [4]cutoff of '-''
+    print "Usage: [1]infile, [2]# of samples, [3]cutoff of 'U', [4]cutoff of '-'"
     sys.exit(1)
 
 infbase = splitext(basename(infile))[0]
