@@ -4,21 +4,17 @@
 # Date: Aug.16 2013, last update: Oct.4 2013
 # Description:
 #
-# This python script splits scaffolds in a file of grouped SNP haplotypes at points where 
-# consecutive SNP-groups show more differences in their 'A' and 'B'calls than allowed 
-# be the 'cutoff' parameter.
-# The scripts generates a new haplotype table in which the split scaffolds have been renamed
-# and a log file which provides the number of scaffolds before and after splitting as 
-# a list of the split locations.
+# This python script split the SNP chunk files by the turning points 'A'<->'B'
 #
 # =================================================================================
 # input arguments:
 #   1.input file.
 #   2. number of samples
+#   3. cutoff for mismatches 
 #   3. cutoff for 'U' (for example: 25)
 #   4. cutoff for '-' (missing data)
 #
-# Output: split scaffold haplotypefile, log file
+# Output: split file.
 #
 ######################################################################################
 
@@ -29,22 +25,23 @@ from os.path import basename, splitext
 ######################################################
 
 # ----- get options and file names and open files -----
-if len(sys.argv) == 5:
+if len(sys.argv) == 6:
     infile = sys.argv[1]
     samples = int(sys.argv[2])
     cutoff = int(sys.argv[3])
-    cutoffM = int(sys.argv[4])
+    cutoffU = int(sys.argv[4])
+    cutoffM = int(sys.argv[5])
 else:
     print len(sys.argv)
-    print "Usage: [1]infile, [2]# of samples, [3]cutoff of 'U', [4]cutoff of '-'"
+    print "Usage: [1]infile, [2]# of samples, [3]cutoff of missmatches, [4]cutoff of 'U', [5]cutoff of '-'"
     sys.exit(1)
 
 infbase = splitext(basename(infile))[0]
-outfile = 'split_c' + sys.argv[3] + infbase + '.tsv'
+outfile = 'split_c' + sys.argv[3] + '-' + sys.argv[4] + '-' + sys.argv[5] + infbase + '.tsv'
 
 tsvin = open(infile,'rb')
 tsvout = open(outfile, 'wb')
-log = open("log_split_c"+ sys.argv[3] + infbase + '.txt','w')
+log = open("log_split_c" + sys.argv[3] + '-' + sys.argv[4] + '-' + sys.argv[5] + infbase + '.txt','w')
 
 tsvinreader = csv.reader(tsvin, delimiter='\t')
 tsvoutwriter = csv.writer(tsvout, delimiter='\t')
@@ -85,7 +82,7 @@ for row in tsvinreader:
             cntM = row[4:].count('-') # count the occurence of '-'
             mismatches = len([x for x, y in zip(prerow, row[4:]) if x != y]) # find mismatch items in previous and current rows
 
-            if cntU >= cutoff:
+            if cntU >= cutoffU:
                 urow = row
                 row = tsvinreader.next()
                 mismatches = len([x for x, y in zip(prerow, row[4:]) if x != y])
@@ -106,7 +103,7 @@ for row in tsvinreader:
                 rowlist = []
                 rowlist.append(row)
             else:
-                if cntU >= cutoff:
+                if cntU >= cutoffU:
                     rowlist.append(urow)
                 rowlist.append(row)
 
@@ -122,6 +119,6 @@ print "New Scaffold segments:" + str(splitcnt)
 log.write("\n\n")
 log.write("Filename:" + sys.argv[1] + '\n')
 log.write("Number Of Samples:" + sys.argv[2] + '\n')
-log.write("Cutoff Threshold:" + sys.argv[3] + '\n')
+log.write("Cutoff Threshold:" + sys.argv[3] + '-' + sys.argv[4] + '-' + sys.argv[5]+'\n')
 log.write("Processed Scaffolds:" + str(scafcnt) + '\n')
 log.write("New Scaffold segments:" + str(splitcnt)+ '\n')
