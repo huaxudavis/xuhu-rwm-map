@@ -70,5 +70,5 @@ python  05-ScaffoldSplit.py  SNP-group-table.tsv  number-of-samples cutoff-numbe
     [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8split.png http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8split.png]
   # For mapping purposes a haplotype table for the split scaffolds can be generated with 06-ScaffoldHaplotyper.py. This script converts the group counts into group haplotypes with the GroupHaplotyper script. The haplotyping thresholds are hardcoded in the script and should be edited there. If the B/A call ratio is between 0.25 and 4, the group is typed as heterozygous; if it is lower than 0.25 the haplotype is set to A; if it is bigger than 4, the haplotype is set to B.The script generates an outputfile with all scaffolds and two additional with filtered data with the prefixes 'htyped-flt-' (for scaffolds passingthe test) and 'htyped-rem-' (for scaffolds  failing the test). Filtering is done according the precentage of missing data
 {{{
-python 06-ScaffoldHaplotyper.py chunked-clean-genotype-table.tsv  number_of_samples  max-percentage_of_missing_data &
+python 06-ScaffoldHaplotyper.py group-genotype-table.tsv  number_of_samples  max-percentage_of_missing_data &
 }}}
