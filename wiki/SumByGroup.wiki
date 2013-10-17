@@ -10,7 +10,7 @@ This python script summarize the genotype data for groups of SNPs along the refe
 === Parameters ===
   * Input file
   * number of scaffolds per group to sum
-    * if opt is l: it is the number of lines for each scaffold to sum, if num set to 0, scaffold will sum by ID name;
+    * if opt is l: sum by line: number of lines to sum/number of lines to wrap up at the end, for example 100/20; sum by scaffold ID: num set to 0/0;
     * if opt is b, it is the position range to sum.
   * opt: l - sum by lines or b - sum by position range
   * format: f - first run or s - second run(has two extra blank lines between groups and two extra cols); s option does not work with b option
