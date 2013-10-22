@@ -26,12 +26,12 @@ Note:
  - if the genotyping data are very skewed (minor allele frequency < 10%), the SNP will be removed.
 
 Output:
-- a "parsed_" file (conversion of the mpileup fiel into counts for consensus and variant calls)-
+- a "parsed_" file (conversion of the mpileup file into counts for consensus and variant calls)-
 - a "GTcounts_"  file (count of genotytes per SNP)
 - a "genotyped_" file (providing a genotype for per RIL for each SNP
 - and if option is 1: additionaly a "cleanedGTs_" file  (SNPs with severly skewed genotype data have been filtered out)
 
-The GTcounts file lists for each SNP: scaffold, position, sum of Us, sum of As, sum of Bs, sum of "-"s (missing data), flags (inidcating the reasons to filter this SNP - please see above).
+The GTcounts file lists for each SNP: scaffold, position, sum of Us, sum of As, sum of Bs, sum of "-"s (missing data), A/B call ratio, flags (indicating the reasons to filter this SNP - please see above).
 """
 ######################################################################################
 # count in cells
