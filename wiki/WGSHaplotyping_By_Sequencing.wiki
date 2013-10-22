@@ -35,9 +35,13 @@ bwa mem -t 2 -w 5  ref_genome.fa read1.fq read2.fq > aln-pe.sam
 {{{
 samtools view -uS sample1.sam | samtools sort - outputPrefix
 }}}
-  # Analyze the variants for the HQ-SNPs and combine the data of all samples into a single table - the “mpileup” file:
+  # Generate a samtools index for the reference sequence:
 {{{
-samtools mpileup -Q 10 -I -l HQ_SNP_loci_BED-file.tsv -f ref_genome.fa  sample1.bam sample2.bam sample3.bam etc_all_samples.bam…. > all_samples.mpileup
+samtools faidx ref_genome.fa
+}}}
+  # Parse the variant and consensus calls for the HQ-SNPs and combine the data of all samples into a single table - the “mpileup” file:
+{{{
+samtools mpileup -q 10 -l HQ_SNP_loci_BED-file.tsv -f ref_genome.fa  sample1.bam sample2.bam sample3.bam etc_all_samples.bam…. > all_samples.mpileup
 }}}
   # Use the 02-GenotyperCleaner.py script to generate two tables from mpileup file: One table with the SNP-counts per cell of the table ( ”parsed~”) and one of the genotype calls ( ”genotyped~”).  The script will also remove SNPs from the tables for which the genotyping data show alignments to indels.  Generate the count and genotype tables with:
 {{{
