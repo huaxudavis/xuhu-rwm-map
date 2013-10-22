@@ -2,30 +2,37 @@
 import csv, os, sys
 from os.path import basename, splitext
 ##################################################################################
-# Authors: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
-# Date: Aug.15 2013; last updated Aug.29 2013
-# Description:
-#
-# This python script sums the occurences of SNP consensus calls and variant calls
-# (i.e. [,.] or [ATCG|atcg]) in mpileup files for each SNP.
-# It also converts the count results into a genotype table.
-# An additional 'cleaned' genotype table from which SNPs with obvious artifacts are removed
-# is generated if the option '1' is applied.
-# =================================================================================
-# input arguments:
-#	1.input file.
-#	2.number of sample
-#  3.opt: cleaned (1) or not cleaned(0)
-# Note:
-#  The following thresholds per SNP are hard-coded in the script, but can be easily edited:
-#  - if more than one sample displays an indel in the alignment, the SNP will be removed;
-#    the data point containing the indel will be set to 'missing data' in any case.
-#  - if data for more than 80% of the samples are missing (M), the SNP will be removed.
-#  - if more than 50% of the called genotypes are heterozygous (U), the SNP will be removed.
-#  - if the genotyping data are very skewed (minor allele frequency < 10%), the SNP will be removed.
-#		  
-# Output: count files and genotype files, if option is 1: cleaned genotype file and cleanCount file.
-#
+"""
+Authors: Lutz Froenicke(lfroenicke@ucdavis.edu) and Huaqin Xu (huaxu@ucdavis.edu)
+Date: Aug.15 2013; last updated Aug.29 2013
+Description:
+
+This python script sums the occurences of SNP consensus calls and variant calls
+(i.e. [,.] or [ATCG|atcg]) in mpileup files for each SNP.
+It also converts the count results into a genotype table.
+An additional 'cleaned' genotype table from which SNPs with obvious artifacts are removed
+is generated if the option '1' is applied.
+=================================================================================
+input arguments:
+	1.input file.
+	2.number of sample
+	3.opt: cleaned (1) or not cleaned(0)
+Note:
+ The following thresholds per SNP are hard-coded in the script, but can be easily edited:
+ - if more than one sample displays an indel in the alignment, the SNP will be removed;
+   the data point containing the indel will be set to 'missing data' in any case.
+ - if data for more than 80% of the samples are missing (M), the SNP will be removed.
+ - if more than 50% of the called genotypes are heterozygous (U), the SNP will be removed.
+ - if the genotyping data are very skewed (minor allele frequency < 10%), the SNP will be removed.
+
+Output:
+- a "parsed_" file (conversion of the mpileup fiel into counts for consensus and variant calls)-
+- a "GTcounts_"  file (count of genotytes per SNP)
+- a "genotyped_" file (providing a genotype for per RIL for each SNP
+- and if option is 1: additionaly a "cleanedGTs_" file  (SNPs with severly skewed genotype data have been filtered out)
+
+The GTcounts file lists for each SNP: scaffold, position, sum of Us, sum of As, sum of Bs, sum of "-"s (missing data), flags (inidcating the reasons to filter this SNP - please see above).
+"""
 ######################################################################################
 # count in cells
 def countcell(cnt, pu):
