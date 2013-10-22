@@ -129,7 +129,7 @@ if opt == 'l':
     for alist in rowlist:
         id = alist[0]
         SNPlines = alist[1]
-        print id + ":" + str(SNPlines)
+        # print id + ":" + str(SNPlines)
         if cnt > 0:  #sum by the predefined number
             if SNPlines < cnt:
                 loopcnt = 0
@@ -208,7 +208,7 @@ else:
             
         id = rlist[0]
         SNPlines = rlist[1]
-        print id + ":" + str(SNPlines)        
+        # print id + ":" + str(SNPlines)        
         total = []
         if SNPlines != 0:            
             cnt_lines = list(islice(tsvinreader, SNPlines))  # get lines by range
