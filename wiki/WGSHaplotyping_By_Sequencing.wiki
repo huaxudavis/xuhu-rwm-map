@@ -74,8 +74,7 @@ python  05-ScaffoldSplit.py  SNP-group-table.tsv  number-of-samples cutoff-numbe
 }}}
    As a result, the scaffold in the middle of the above picture is now split into two scaffolds and both can be mapped independently.
     [http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8split.png http://xuhu-rwm-map.googlecode.com/svn/wiki/data/scaffold8split.png]
-
-  # Create genotype counts for each scaffold and sample by re-using the Sum-by-groups scrript:
+  # Create genotype counts for each scaffold and sample by re-using the SumByGroup script:
 {{{
 python 03-SumByGroup.py  split-SNP-group-table.tsv  0/0 l s
 }}}
