@@ -16,8 +16,10 @@ Required software: CLC (for identification and filtering of parental SNPs), BWA 
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/05-ScaffoldSplit.py 05-ScaffoldSplit.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/06-ScaffoldHaplotyper.py 06-ScaffoldHaplotyper.py]
 
-== Details Steps ==
+== Outline of the pipeline ==
 
+  # Please see the information in the header comments of each script for details on the options.
+ 
   # Alignments of parental reads in CLC and filtering of HQ-SNPs as detailed in Alex’s powerpoint slides (email from May 23rd) .   Export the resulting table of the positions of HQ SNPs in the reference out of CLC.  Crate a BED file from thse data (extract the first two columns and add an extra column to the table) with the 01-CLC_Table_Converter.py script:
 {{{
 python 01-CLC-to-BED-file.py &
