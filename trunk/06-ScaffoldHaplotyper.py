@@ -110,7 +110,7 @@ remSc = 0
 
 
 for row in tsvinreader:
-    if row == []:
+    if row == [] or row[0] == '':
         gtresult = row
         # tsvoutwriter.writerow(gtresult)
     else:
@@ -147,10 +147,10 @@ for row in filtreader:
         rowlist = rowlist + [[curid, SNPcount]]
 
 
-cnt_lines = list(islice(filtreader, filSc))
+    cnt_lines = list(islice(filtreader, filSc))
 
 
-    if len(row)<2 and len(row)>0:
+    if (len(row)<2 and len(row)>0) or row[0] == '':
     #    print row
         continue
     if first == 1:
