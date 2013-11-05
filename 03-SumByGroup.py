@@ -81,7 +81,7 @@ cutoff = cnt
 for row in tsvidreader:
     if row == [] or row == '\n':
         continue
-    if len(row)<2 and len(row)>0:
+    if (len(row)<2 and len(row)>0) or row[0] == '':
         continue
     if first == 1:
         curid = row[0]
