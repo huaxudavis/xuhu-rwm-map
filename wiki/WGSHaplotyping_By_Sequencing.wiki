@@ -7,7 +7,7 @@ The scripts aim to filter out poor SNPs, genotype SNPs (in a primitive way becau
 
 Required software: CLC (for identification and filtering of parental SNPs), BWA  (or another aligner: e.g. CLC, Bowtie, … to generate alignments as BAM files ), Samtools (to generate mpileup files), Python (v2.6X or v2.7X), Excel (for data visualization).   Most of the python scripts have some documentation inside in the comments.  The thresholds for filtering and genotyping might have to be adjusted depending on data sets – please modify these settings by editing the scripts.
 
-== Link to Scripts ==
+== Links to Scripts ==
 
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/01-CLC_Table_Converter.py 01-CLC_Table_Converter.py]
   * [http://xuhu-rwm-map.googlecode.com/svn/trunk/02-GenotyperCleaner.py 02-GenotyperCleaner.py]
